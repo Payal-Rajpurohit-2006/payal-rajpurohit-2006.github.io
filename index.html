@@ -283,11 +283,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
     </div>
     <div>
       <label for="n">Your name</label><input id="n" autocomplete="name">
+      <label for="c">Your email or WhatsApp number</label><input id="c" autocomplete="email">
       <label for="t">What is this about?</label>
       <select id="t"><option>Book a demo</option><option>Event hosting or anchoring</option><option>On-camera or video work</option><option>Business or partnership</option><option>Something else</option></select>
       <label for="m">Message</label><textarea id="m" placeholder="Date, place, audience size, or what you have in mind"></textarea>
-      <button class="send" type="button" id="send">Send by email</button>
-      <p class="note" id="msg" role="status">This opens your email app with the message ready to send.</p>
+      <button class="send" type="button" id="send">Send</button>
+      <p class="note" id="msg" role="status">Your details are used only so I can contact you about your demo.</p>
     </div>
   </div>
 </div></section>
@@ -350,10 +351,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
       c.addEventListener('pointerleave',function(){c.style.transform=''})})}
   // contact
   $('#send').addEventListener('click',function(){
-    var n=$('#n').value.trim(),t=$('#t').value,m=$('#m').value.trim(),s=$('#msg');
-    if(!n||!m){s.textContent='Add your name and a short message first.';return}
-    location.href='mailto:payalkanwarrajpurohit@gmail.com?subject='+encodeURIComponent(t+' – '+n)+'&body='+encodeURIComponent(m+'\n\n'+n);
-    s.textContent='Your email app should open now.'});
+    var n=$('#n').value.trim(),t=$('#t').value,m=$('#m').value.trim(),s=$('#msg'),c=$('#c').value.trim();
+    if(!n||!c||!m){s.textContent='Please add your name, your email or WhatsApp number, and a short message.';return}
+    var mailto='mailto:payalkanwarrajpurohit@gmail.com?subject='+encodeURIComponent(t+' – '+n)+'&body='+encodeURIComponent(m+'\n\n'+n);
+    s.textContent='Sending…';
+    fetch('https://script.google.com/macros/s/AKfycbyydax7_qcSb13SeVdMlzUqqpZeHr3IQmNwzMcuys0yaR77Izx6A9chVRL2Y1XvsAiKig/exec',{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({name:n,contact:c,topic:t,message:m})}).then(function(){s.textContent='Thank you! I’ll reach out to you soon.';$('#n').value='';$('#c').value='';$('#m').value=''}).catch(function(){s.textContent='Could not send. Opening your email app instead.';location.href=mailto})});
   $('#dl').addEventListener('click',function(){window.print()});
   $('#share').addEventListener('click',function(){var u=location.href.split('#')[0]+'#resume',m=$('#sharemsg');
     if(navigator.share){navigator.share({title:'Payalkanwar Rajpurohit: Resume',url:u}).catch(function(){})}
